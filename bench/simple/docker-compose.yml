@@ -1,0 +1,40 @@
+
+version: "3.9"
+
+services:
+  cpu_bench:
+    image: ubuntu:24.04
+    container_name: bench_cpu
+    restart: "no"
+    volumes:
+      - ./bench-results:/results
+    command: >
+      bash -c "
+        apt-get update &&
+        apt-get install -y --no-install-recommends sysbench &&
+        sysbench cpu --threads=${CPU_THREADS:-4} --time=${CPU_TIME:-20} run | tee /results/cpu_sysbench.txt
+      "
+
+  mem_bench:
+    image: ubuntu:24.04
+    container_name: bench_mem
+    restart: "no"
+    volumes:
+      - ./bench-results:/results
+    command: >
+      bash -c "
+        apt-get update &&
+        apt-get install -y --no-install-recommends sysbench &&
+        sysbench memory --threads=${MEM_THREADS:-4} --time=${MEM_TIME:-20} run | tee /results/memory_sysbench.txt
+      "
+
+  disk_bench:
+    image: ubuntu:24.04
+    container_name: bench_disk
+    restart: "no"
+    volumes:
+      - ./bench-results:/results
+    command: >
+      bash -c "
+        dd if=/dev/zero of=/results/testfile.bin bs=4M count=512 conv=fdatasync 2> /results/disk_dd.txt
+      "

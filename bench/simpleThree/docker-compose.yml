@@ -1,0 +1,19 @@
+
+services:
+  cpu_bench:
+    build: ./cpu
+    volumes:
+      - ./bench-results:/results
+    restart: "no"
+
+  mem_bench:
+    build: ./mem
+    volumes:
+      - ./bench-results:/results
+    restart: "no"
+
+  disk_bench:
+    build: ./disk
+    volumes:
+      - ./bench-results:/results
+    restart: "no"

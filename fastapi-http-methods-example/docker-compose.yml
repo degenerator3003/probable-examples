@@ -1,0 +1,35 @@
+
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    container_name: fastapi_pg
+    restart: always
+    environment:
+      POSTGRES_DB: fastapi_db
+      POSTGRES_USER: fastapi_user
+      POSTGRES_PASSWORD: fastapi_pass
+    ports:
+      - "5439:5432"
+    volumes:
+      - postgres_ata:/var/lib/postgresql/data
+ 
+  web:
+    build: ./application
+    container_name: fastapi_app
+    restart: always
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: fastapi_db
+      DB_USER: fastapi_user
+      DB_PASSWORD: fastapi_pass
+    ports:
+      - "8000:8000"
+
+  
+volumes:
+  postgres_ata:

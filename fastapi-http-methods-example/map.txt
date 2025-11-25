@@ -1,0 +1,15 @@
+
+fastapi-http-methods-example/
+├─ docker-compose.yml
+├─ target/
+│  ├─ Dockerfile
+│  ├─ requirements.txt
+│  ├─ app/
+│  │  ├─ __init__.py
+│  │  ├─ db.py
+│  │  ├─ models.py
+│  │  ├─ schemas.py
+│  │  ├─ crud.py
+│  │  └─ main.py
+│  └─ tests/
+│     └─ test_items.py
