@@ -1,0 +1,44 @@
+
+services:
+  db:
+    image: postgres:16
+    container_name: crm_postgres
+    environment:
+      POSTGRES_DB: crm
+      POSTGRES_USER: crm_user
+      POSTGRES_PASSWORD: crm_password
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+  # Optional: remove this whole block if you really don't want Redis
+  redis:
+    image: redis:7
+    container_name: crm_redis
+    ports:
+      - "6379:6379"
+
+  api:
+    build: ./backend_fastapi
+    container_name: crm_fastapi
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql+psycopg2://crm_user:crm_password@db:5432/crm
+      # REDIS_URL is optional; you can ignore or delete it
+      REDIS_URL: redis://redis:6379/0
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build: ./frontend
+    container_name: crm_frontend
+    depends_on:
+      - api
+    ports:
+      - "3000:80"
+
+volumes:
+  db_data:
+

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Green-White CRM</title>
+  <style>
+    :root {
+      --green-main: #2ecc71;
+      --green-dark: #27ae60;
+      --white: #ffffff;
+      --gray-light: #ecf0f1;
+      --gray-dark: #2c3e50;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: var(--gray-light);
+      color: var(--gray-dark);
+    }
+    header {
+      background: linear-gradient(90deg, var(--green-main), var(--green-dark));
+      color: var(--white);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-weight: bold;
+      font-size: 1.4rem;
+    }
+    .container {
+      padding: 2rem;
+      display: flex;
+      justify-content: center;
+    }
+    .card {
+      background: var(--white);
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      max-width: 700px;
+    }
+    h2 {
+      margin-top: 0;
+    }
+    button {
+      background: var(--green-main);
+      color: var(--white);
+      border: none;
+      border-radius: 4px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      margin-right: 0.5rem;
+    }
+    button:hover {
+      background: var(--green-dark);
+    }
+    form {
+      display: flex;
+      gap: 0.5rem;
+      margin: 1rem 0;
+      flex-wrap: wrap;
+    }
+    input {
+      padding: 0.4rem 0.6rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      min-width: 150px;
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    li {
+      padding: 0.4rem 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">Green-White CRM</div>
+    <div>Demo</div>
+  </header>
+  <div class="container">
+    <div class="card">
+      <h2>Customers</h2>
+      <form id="customerForm">
+        <input id="name" placeholder="Name" required />
+        <input id="email" type="email" placeholder="Email (optional)" />
+        <button type="submit">Add</button>
+      </form>
+      <button onclick="loadCustomers()">Reload</button>
+      <ul id="customers"></ul>
+    </div>
+  </div>
+
+  <script>
+    async function loadCustomers() {
+      const res = await fetch("/api/customers");
+      const data = await res.json();
+      const ul = document.getElementById("customers");
+      ul.innerHTML = "";
+      data.forEach(c => {
+        const li = document.createElement("li");
+        li.textContent = `${c.id}: ${c.name} (${c.email || "no email"})`;
+        ul.appendChild(li);
+      });
+    }
+
+    document.getElementById("customerForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value || null;
+
+      await fetch("/api/customers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email }),
+      });
+
+      document.getElementById("name").value = "";
+      document.getElementById("email").value = "";
+      loadCustomers();
+    });
+
+    loadCustomers();
+  </script>
+</body>
+</html>
+

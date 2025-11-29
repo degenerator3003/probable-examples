@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  ubuntu_xfce_rdp:
+    build: .
+    container_name: ubuntu_xfce_rdp
+    ports:
+      - "3389:3389"    
+    depends_on:
+      - db1
+      - db2
+    networks:
+      - public 
+      - backend
+    restart: unless-stopped
+
+
+  db1:
+    image: postgres:16
+    container_name: postgres_db1
+    environment:
+      POSTGRES_USER: user1
+      POSTGRES_PASSWORD: pass1
+      POSTGRES_DB: db1
+    ports:
+      - "5433:5432"        # host:container (optional, for host access)
+    networks:
+      - backend
+    restart: unless-stopped
+
+  db2:
+    image: postgres:16
+    container_name: postgres_db2
+    environment:
+      POSTGRES_USER: user2
+      POSTGRES_PASSWORD: pass2
+      POSTGRES_DB: db2
+    ports:
+      - "5434:5432"        # host:container
+    networks:
+      - backend
+    restart: unless-stopped
+
+
+networks:
+  backend:
+    driver: bridge
+    internal: true    # <– no internet on this network
+  public:
+    driver: bridge     # <– normal bridge, has internet
